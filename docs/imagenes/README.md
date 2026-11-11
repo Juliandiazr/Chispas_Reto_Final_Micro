@@ -1,10 +1,10 @@
 # Imágenes
 
-Fotos y capturas del proyecto. Nombres sugeridos (el README principal ya enlaza `montaje.jpg`):
-
-- `montaje.jpg` — vista general de la protoboard
-- `oled_caras.jpg` — caras de Chispa en la OLED
-- `cubemx_pines.png` — asignación de pines en CubeMX
-- `cubemx_freertos.png` — tareas y colas en CubeMX
-- `log_uart.png` — captura del log por UART
-- `preemption.png` — línea del log que muestra la preemption
+| Archivo | Qué muestra |
+|---|---|
+| `estado_feliz.jpg` | Estado NORMAL, Chispa feliz |
+| `accion_comer.jpg` | Botón COMER (PC0): "NAM NAM" |
+| `accion_jugar.jpg` | Botón JUGAR (PC1): "A JUGAR!" |
+| `accion_limpiar.jpg` | Botón LIMPIAR (PC2): "LIMPIA!" |
+| `estado_dormida.jpg` | Estado DORMIDA (botón PC3 o LDR a oscuras) |
+| `estado_error_sensor.jpg` | Estado ERROR: "ERROR SENSOR" cuando falla el MPU6050 |

@@ -4,8 +4,21 @@ Proyecto del **Reto: Programación en Alto Nivel** (Unidad 4, Microprocesadores 
 
 Chispa es una mascota virtual que nace de un huevo, siente hambre, quiere jugar, se ensucia y se duerme cuando apagas la luz. Corre en una **STM32F407VET6** (placa "black board") con **HAL** y **FreeRTOS (CMSIS-RTOS v2)**, generada con **STM32CubeMX** y compilada en **STM32CubeIDE**.
 
-![Montaje](docs/imagenes/montaje.jpg)
-> *(Las fotos se agregan en `docs/imagenes/`.)*
+![Chispa feliz](docs/imagenes/estado_feliz.jpg)
+
+### Galería
+
+| Comer (PC0) | Jugar (PC1) | Limpiar (PC2) |
+|---|---|---|
+| ![Comer](docs/imagenes/accion_comer.jpg) | ![Jugar](docs/imagenes/accion_jugar.jpg) | ![Limpiar](docs/imagenes/accion_limpiar.jpg) |
+| **"NAM NAM"**: sube el hambre | **"A JUGAR!"**: sube la felicidad | **"LIMPIA!"**: sube la limpieza |
+
+| Dormida (PC3 o LDR a oscuras) | Error de sensor |
+|---|---|
+| ![Dormida](docs/imagenes/estado_dormida.jpg) | ![Error sensor](docs/imagenes/estado_error_sensor.jpg) |
+| Ojos cerrados y "Zz"; recupera energía | Cara x_x cuando el MPU6050 falla 3 veces seguidas |
+
+En la parte superior de la OLED están las barras **H** (hambre), **F** (felicidad), **E** (energía) y **L** (limpieza). A la izquierda se ve el MPU6050 y a la derecha el botón.
 
 ---
 
