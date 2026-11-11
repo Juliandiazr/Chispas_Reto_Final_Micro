@@ -1,0 +1,15 @@
+# Salidas de compilacion de STM32CubeIDE
+Debug/
+Release/
+*.o
+*.d
+*.su
+*.cyclo
+*.elf
+*.map
+*.list
+# Configuraciones locales del IDE
+*.launch
+.settings/com.st.stm32cube.ide.mcu.sfrview.prefs
+.osx.project
+.DS_Store
