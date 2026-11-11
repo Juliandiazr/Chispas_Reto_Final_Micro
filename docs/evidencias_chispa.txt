@@ -1,0 +1,76 @@
+EVIDENCIAS DE PRUEBA - PROYECTO CHISPA (STM32F407VET6 + HAL + FreeRTOS)
+Fuente: log UART a 115200 baudios (USART1, PA9/PA10), archivo log_chispa.txt
+Fecha de la prueba: 10 de noviembre de 2026
+Formato de cada linea: [tick en ms desde el arranque] TAREA: mensaje
+
+======================================================================
+1. EVIDENCIA DE PREEMPTION (reto, seccion 6.4)
+======================================================================
+[65277] SONIDO: melodia COMER
+[66123] LOGICA: COMER (ISR t=66123) hambre 78->98
+[66123] SONIDO: melodia COMER
+[66132] PANTALLA: frame 66106..66132 preemptado (ISR COMER t=66123)
+
+Lectura:
+- tPantalla (prioridad BelowNormal) estaba enviando un frame a la OLED
+  entre t=66106 ms y t=66132 ms.
+- En t=66123 ms se presiono el boton COMER (PC0): la ISR EXTI0 puso el
+  evento en la cola qEventos.
+- tLogica (Normal) y tSonido (AboveNormal) pasaron a "lista", tenian mayor
+  prioridad y se ejecutaron en ese mismo milisegundo (t=66123), ANTES de
+  que tPantalla terminara su frame (t=66132).
+- tPantalla solo continuo cuando las tareas de mayor prioridad volvieron a
+  quedar bloqueadas (esperando cola/notificacion).
+En el log completo hay 10 eventos de preemption registrados (buscar
+"preemptado").
+
+======================================================================
+2. PRUEBA DE ESTABILIDAD (reto, seccion 4: minimo 5 minutos)
+======================================================================
+- Duracion: de t=0 a t=800000 ms = 13 min 20 s de funcionamiento continuo,
+  sin reinicios.
+- 79 "horas" de Chispa registradas (una cada 10 s), sin cuelgues.
+- Durante la prueba se usaron todos los botones (COMER, JUGAR, LIMPIAR,
+  DORMIR), sacudidas (MPU6050) y la LDR (dormir/despertar con la luz).
+- 0 errores de memoria: no aparece ningun "!! STACK OVERFLOW" ni
+  "!! MALLOC FAILED".
+
+======================================================================
+3. STACK MEDIDO (reto, seccion 6.1: tamano de pila y como se verifico)
+======================================================================
+Metodo: uxTaskGetStackHighWaterMark() reportado cada 30 s por tLogica
+(valor = palabras de 4 bytes que NUNCA se han usado). Ultima medicion:
+[780943] STACK libre(pal): sen=98 son=112 log=350
+[780943] STACK libre(pal): pan=356 tlog=94 heap=14952
+
+Tarea       Stack asignado   Libre minimo   Usado    Margen libre
+tSensores   256 palabras     98             158      38 %
+tSonido     256 palabras     112            144      44 %
+tLogica     512 palabras     350            162      68 %
+tPantalla   512 palabras     356            156      70 %
+tLog        256 palabras     94             162      37 %
+Heap FreeRTOS (25000 B): 14952 B libres.
+Los valores fueron constantes durante toda la prueba (no hay crecimiento),
+y todas las tareas conservan mas de 35 % de margen.
+
+======================================================================
+4. MANEJO DE ERRORES OBSERVADO (problema tecnico encontrado y resuelto)
+======================================================================
+- 5 errores de lectura I2C del MPU6050 durante la prueba. Todos ocurrieron
+  justo despues de que sonara el buzzer (ruido electrico en la protoboard).
+- En cada caso Chispa paso a estado ERROR y se recupero sola en ~1 s
+  ("SENSORES: MPU6050 reconectado"), sin reiniciar el micro.
+- Medidas tomadas: se corrigio la alimentacion del buzzer (se recomienda
+  ademas un diodo en paralelo con el buzzer). En la version final del
+  firmware se agrego la recuperacion del bus I2C (9 pulsos en SCL + STOP)
+  y la tolerancia de 3 fallas seguidas antes de declarar error.
+
+======================================================================
+5. OTRAS EVIDENCIAS EN EL LOG
+======================================================================
+- Deteccion de sensores al arrancar: "I2C: dispositivo en 0x68 (MPU6050)",
+  "PANTALLA: OLED OK".
+- Cambios de estado: HUEVO -> NORMAL -> DORMIDA -> NECESIDAD -> ERROR ...
+  (buscar "estado").
+- LDR: con luz ~1750-1850, tapada ~330-380 (umbral de oscuridad: 600).
+- Sacudidas: "SENSORES: sacudida (energia=...)" con energia > 70000.
